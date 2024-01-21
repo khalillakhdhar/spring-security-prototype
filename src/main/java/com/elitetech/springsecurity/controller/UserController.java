@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,11 +32,11 @@ public class UserController {
         return ResponseEntity.ok("Welcome to Spring Security tutorials !!");
     }
 
-    @PostMapping("/addUser")
-    @PreAuthorize("hasAuthority('ADMIN_ROLES')")
-    public ResponseEntity<String> addUser(@RequestBody UserInfo userInfo){
-        userInfoService.addUser(userInfo);
-        return ResponseEntity.ok("User added successfully");
+    @PostMapping("/add")
+    //@PreAuthorize("hasAuthority('ADMIN_ROLES')")
+    public ResponseEntity<UserInfo> addUser(@RequestBody UserInfo userInfo){
+        
+        return ResponseEntity.ok(userInfoService.addUser(userInfo));
     }
 
     @PostMapping("/login")
@@ -52,6 +53,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user request");
         }
     }
+  
 
     @GetMapping("/getUsers")
     @PreAuthorize("hasAuthority('ADMIN_ROLES')")
@@ -69,4 +71,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-}
+    @GetMapping("/getUser/{name}")
+    @PreAuthorize("hasAuthority('USER_ROLES')")
+    public ResponseEntity<UserInfo> getOneUser(@PathVariable String name){
+        UserInfo user = userInfoService.getOneUser(name);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }}

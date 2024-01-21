@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,8 @@ import java.util.function.Function;
 @Component
 public class JwtService {
     private static final String SECERET = "!@#$FDGSDFGSGSGSGSHSHSHSSHGFFDSGSFGSSGHSDFSDFSFSFSFSDFSFSFSF";
-
+@Autowired
+UserInfoService userInfoService;
     public String generateToken(String userName){
         Map<String, Objects> claims = new HashMap<>();
         return Jwts.builder()
@@ -24,6 +27,11 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*30))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+    }
+    public UserDetails getUserFromToken(String token) {
+    	
+        String username = extractUserName(token);
+        return userInfoService.loadUserByUsername(username);
     }
 
     private Key getSignKey() {

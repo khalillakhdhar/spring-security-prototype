@@ -27,10 +27,13 @@ public class UserInfoService implements UserDetailsService {
         return userInfo.map(UserInfoDetails::new)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"+username));
     }
-    public String addUser(UserInfo userInfo){
+    public UserInfo getOneUser(String name)
+    {
+    	return userInfoRepository.findByName(name).orElse(null);
+    }
+    public UserInfo addUser(UserInfo userInfo){
         userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        userInfoRepository.save(userInfo);
-        return "User added successfully";
+        return userInfoRepository.save(userInfo);
     }
     public List<UserInfo> getAllUser(){
          return userInfoRepository.findAll();
