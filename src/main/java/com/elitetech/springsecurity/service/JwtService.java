@@ -19,6 +19,7 @@ public class JwtService {
     private static final String SECERET = "!@#$FDGSDFGSGSGSGSHSHSHSSHGFFDSGSFGSSGHSDFSDFSFSFSFSDFSFSFSF";
 @Autowired
 UserInfoService userInfoService;
+
     public String generateToken(String userName){
         Map<String, Objects> claims = new HashMap<>();
         return Jwts.builder()
