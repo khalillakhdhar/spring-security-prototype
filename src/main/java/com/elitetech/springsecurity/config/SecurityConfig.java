@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.elitetech.springsecurity.filter.JwtFilter;
 import com.elitetech.springsecurity.service.UserInfoService;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -28,20 +27,22 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return new UserInfoService();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    
-        return httpSecurity.csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/auth/add","/auth/login","/auth/welcome")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        return httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/add", "/auth/login", "/auth/welcome").permitAll();
+                    auth.anyRequest().authenticated();
+                    // Log pour déboguer les autorisations
+                    System.out.println("Authorization rules applied for public endpoints");
+                })
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -59,9 +60,10 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }
+

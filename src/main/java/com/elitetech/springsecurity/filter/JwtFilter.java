@@ -16,30 +16,43 @@ import com.elitetech.springsecurity.service.JwtService;
 import com.elitetech.springsecurity.service.UserInfoService;
 
 import java.io.IOException;
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtService jwtService;
+
     @Autowired
     private UserInfoService userInfoService;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
+            throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        String token= null;
+        String token = null;
         String userName = null;
-        if(authHeader !=null && authHeader.startsWith("Bearer")){
+
+        // Extraire le token de l'en-tête Authorization
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            userName =jwtService.extractUserName(token);
+            userName = jwtService.extractUserName(token);
         }
-        if(userName !=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails = userInfoService.loadUserByUsername(userName);
-            if(jwtService.validateToken(token,userDetails)){
-                UsernamePasswordAuthenticationToken authToken =  new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+
+        // Si aucun token JWT ou si l'utilisateur est déjà authentifié, passer la requête
+        if (userName == null || SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return; // Laisser passer la requête
         }
-        filterChain.doFilter(request,response);
+
+        // Charger les détails de l'utilisateur et valider le token
+        UserDetails userDetails = userInfoService.loadUserByUsername(userName);
+        if (jwtService.validateToken(token, userDetails)) {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+        
+        filterChain.doFilter(request, response);
     }
 }
