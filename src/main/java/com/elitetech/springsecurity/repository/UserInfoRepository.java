@@ -8,10 +8,9 @@ import com.elitetech.springsecurity.entity.UserInfo;
 import java.util.Optional;
 
 @Repository
-public interface UserInfoRepository extends JpaRepository<UserInfo,Integer> {
+public interface UserInfoRepository extends JpaRepository<UserInfo,Long> {
 
     Optional<UserInfo> findByName(String userName);
-    Optional<UserInfo> findByEmail(String email); // Ajout de la recherche par email
 
 
 }
