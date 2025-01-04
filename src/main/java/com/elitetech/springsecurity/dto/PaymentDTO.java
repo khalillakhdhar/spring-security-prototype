@@ -27,6 +27,6 @@ public class PaymentDTO {
     @NotBlank(message = "La méthode de paiement est obligatoire")
     private String method;
 
-    @NotNull(message = "La commande associée est obligatoire")
-    private Long orderId;
+    
+    private OrderDTO order;
 }

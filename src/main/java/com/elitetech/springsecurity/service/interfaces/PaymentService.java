@@ -8,7 +8,6 @@ import java.util.List;
 public interface PaymentService {
     PaymentDTO processPayment(Long orderId, PaymentDTO paymentDTO);
 
-    PaymentDTO updatePayment(Long id, PaymentDTO paymentDTO);
 
     void deletePayment(Long id);
 
