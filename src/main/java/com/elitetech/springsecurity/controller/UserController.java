@@ -53,7 +53,7 @@ public class UserController {
                     new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
 
             if (authentication.isAuthenticated()) {
-                UserInfo user = userInfoService.getOneUser(authRequest.getUserName());
+                UserInfo user = userInfoService.getUserByEmail(authRequest.getUserName());
                 if (user != null) {
                     // Convertir les rôles en chaînes de texte
                     Set<String> roleNames = user.getRoles()

@@ -23,7 +23,7 @@ public class JwtService {
 
     private final UserInfoService userInfoService;
 
-    public String generateToken(String username, Integer userId, Set<String> roles) {
+    public String generateToken(String username, long userId, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("userId", userId)

@@ -68,7 +68,7 @@ public UserInfo addUser(UserInfo userInfo) {
         return userInfoRepository.findAll();
     }
 
-    public UserInfo getUser(Integer id) {
+    public UserInfo getUser(long id) {
         return userInfoRepository.findById(id).get();
     }
 }
