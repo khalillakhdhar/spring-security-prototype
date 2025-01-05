@@ -1,5 +1,8 @@
 package com.elitetech.springsecurity.dto;
 
+import java.util.List;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,4 +29,6 @@ public class UserDTO {
     @NotBlank(message = "Le mot de passe est obligatoire")
     @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
     private String password;
+    private Set<RoleDTO> roles;
+    private List<OrderDTO> orders;
 }

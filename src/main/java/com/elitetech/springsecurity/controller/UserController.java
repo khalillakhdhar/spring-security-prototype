@@ -61,8 +61,8 @@ public class UserController {
                             .map(role -> role.getName()) // Assuming Role has a getName() method
                             .collect(Collectors.toSet());
 
-                    String token = jwtService.generateToken(user.getName(), user.getId(), roleNames);
-                    System.out.println("Token generated for user: " + user.getName());
+                    String token = jwtService.generateToken(user.getEmail(), user.getId(), roleNames);
+                    System.out.println("Token generated for user: " + user.getEmail());
                     return ResponseEntity.ok(token);
                 } else {
                     System.out.println("Invalid user request: user not found");
@@ -74,7 +74,7 @@ public class UserController {
             }
         } catch (UsernameNotFoundException e) {
             System.out.println("Authentication failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid user request");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
     }
 
@@ -83,7 +83,7 @@ public class UserController {
     public ResponseEntity<String> refreshToken(@RequestHeader("Authorization") String token) {
         try {
             // Supprime le préfixe "Bearer " si présent
-            token = token.startsWith("Bearer ") ? token.substring(7) : token;
+            token = token.startsWith("Bearer") ? token.substring(7) : token;
 
             String refreshedToken = jwtService.refreshToken(token);
             return ResponseEntity.ok(refreshedToken);
@@ -95,20 +95,20 @@ public class UserController {
     }
 
     @GetMapping("/getUsers")
-    @PreAuthorize("hasAuthority('ADMIN_ROLES')")
+    //@PreAuthorize("hasAuthority('ADMIN_ROLES')")
     public ResponseEntity<List<UserInfo>> getAllUsers() {
         return ResponseEntity.ok(userInfoService.getAllUser());
     }
 
     @GetMapping("/getUsers/{id}")
-    @PreAuthorize("hasAuthority('USER_ROLES')")
+   // @PreAuthorize("hasAuthority('USER_ROLES')")
     public ResponseEntity<UserInfo> getUser(@PathVariable Integer id) {
         UserInfo user = userInfoService.getUser(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @GetMapping("/getUser/{name}")
-    @PreAuthorize("hasAuthority('USER_ROLES')")
+   // @PreAuthorize("hasAuthority('USER_ROLES')")
     public ResponseEntity<UserInfo> getOneUser(@PathVariable String name) {
         UserInfo user = userInfoService.getOneUser(name);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
