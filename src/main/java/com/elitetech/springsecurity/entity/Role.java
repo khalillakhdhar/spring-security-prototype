@@ -11,11 +11,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,9 @@ public class Role {
 
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    @JsonIgnoreProperties("roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("roles") // Prevent cyclic references
     private Set<UserInfo> users = new HashSet<>();
+
 }
+

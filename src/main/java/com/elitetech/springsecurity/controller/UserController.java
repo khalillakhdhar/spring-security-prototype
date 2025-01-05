@@ -95,9 +95,9 @@ public class UserController {
     }
 
     @GetMapping("/getUsers")
-    //@PreAuthorize("hasAuthority('ADMIN_ROLES')")
     public ResponseEntity<List<UserInfo>> getAllUsers() {
-        return ResponseEntity.ok(userInfoService.getAllUser());
+        List<UserInfo> users = userInfoService.getAllUser();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/getUsers/{id}")

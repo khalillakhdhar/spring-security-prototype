@@ -11,12 +11,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "user"})
 public class Commande {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +32,11 @@ public class Commande {
     private UserInfo user;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "order_products",
-               joinColumns = @JoinColumn(name = "order_id"),
-               inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @JoinTable(
+        name = "order_products",
+        joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
     @JsonIgnoreProperties("orders")
     private Set<Product> products = new HashSet<>();
 
@@ -43,3 +44,4 @@ public class Commande {
     @JsonIgnoreProperties("order")
     private Payment payment;
 }
+

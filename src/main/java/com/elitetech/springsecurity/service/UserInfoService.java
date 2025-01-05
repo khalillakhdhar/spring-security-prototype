@@ -45,24 +45,24 @@ public class UserInfoService implements UserDetailsService {
     public UserInfo getOneUser(String name) {
         return userInfoRepository.findByName(name).orElse(null);
     }
+    public UserInfo addUser(UserInfo userInfo) {
+        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
 
+        Set<Role> managedRoles = new HashSet<>();
+        for (Role role : userInfo.getRoles()) {
+            Role managedRole = roleRepository.findById(role.getId())
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + role.getId()));
+            managedRoles.add(managedRole);
+        }
+        userInfo.setRoles(managedRoles);
 
-public UserInfo addUser(UserInfo userInfo) {
-    // Encoder le mot de passe
-    userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+        System.out.println("Roles assigned to user: " + managedRoles);
 
-    // Assurez-vous que chaque rôle est attaché à l'EntityManager
-    Set<Role> managedRoles = new HashSet<>();
-    for (Role role : userInfo.getRoles()) {
-        Role managedRole = roleRepository.findById(role.getId())
-                                         .orElseThrow(() -> new RuntimeException("Role not found: " + role.getId()));
-        managedRoles.add(managedRole);
+        return userInfoRepository.save(userInfo);
     }
-    userInfo.setRoles(managedRoles);
 
-    // Sauvegarder l'utilisateur
-    return userInfoRepository.save(userInfo);
-}
+
+
 
     public List<UserInfo> getAllUser() {
         return userInfoRepository.findAll();
